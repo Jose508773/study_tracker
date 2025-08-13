@@ -13,7 +13,6 @@ export const migrateOldData = () => {
 
   // Check if we have old data but no new data
   const oldCodingData = localStorage.getItem(oldCodingKey);
-  const oldStudyData = localStorage.getItem(oldStudyKey);
   const oldGoalsData = localStorage.getItem(oldGoalsKey);
   
   const newStudyData = localStorage.getItem(newStudyKey);
