@@ -5,7 +5,6 @@ export const migrateOldData = () => {
   if (typeof window === 'undefined') return;
 
   const oldCodingKey = 'coding-storage';
-  const oldStudyKey = 'study-storage';
   const oldGoalsKey = 'goals-storage';
   
   const newStudyKey = getStorageKey('study-storage');
