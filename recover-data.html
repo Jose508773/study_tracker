@@ -3,185 +3,354 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Tracker Data Recovery</title>
+    <title>Recover Study Data</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
             padding: 20px;
-            background: #1a1a1a;
+            min-height: 100vh;
             color: white;
         }
         .container {
-            background: #2a2a2a;
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #00F5FF, #FF6B6B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
             padding: 20px;
-            border-radius: 10px;
-            margin: 10px 0;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         button {
-            background: #00F5FF;
-            color: black;
+            background: linear-gradient(45deg, #00F5FF, #667eea);
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
             cursor: pointer;
-            margin: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
         }
         button:hover {
-            background: #00D4E6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 245, 255, 0.4);
         }
-        pre {
-            background: #333;
-            padding: 10px;
-            border-radius: 5px;
-            overflow-x: auto;
-            white-space: pre-wrap;
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            color: white;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            resize: vertical;
+            margin: 10px 0;
         }
-        .success { color: #4CAF50; }
-        .error { color: #f44336; }
-        .warning { color: #ff9800; }
+        .data-preview {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+            color: #10B981;
+        }
+        .error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #EF4444;
+        }
+        .info {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            color: #3B82F6;
+        }
+        .warning {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.5);
+            color: #F59E0B;
+        }
+        .step {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #00F5FF;
+        }
     </style>
 </head>
 <body>
-    <h1>🔧 Study Tracker Data Recovery</h1>
-    
     <div class="container">
-        <h2>Step 1: Get Data from Vercel App</h2>
-        <p>1. Go to your Vercel Study Tracker app</p>
-        <p>2. Open Developer Tools (F12)</p>
-        <p>3. Go to Console tab</p>
-        <p>4. Type: <code>JSON.stringify(localStorage)</code> and press Enter</p>
-        <p>5. Copy the entire output</p>
-        <p>6. Paste it in the textarea below:</p>
-        <textarea id="vercelData" placeholder="Paste your Vercel localStorage data here..." style="width: 100%; height: 100px; background: #333; color: white; border: 1px solid #555; padding: 10px; border-radius: 5px;"></textarea>
-        <br><br>
-        <button onclick="importVercelData()">Import Vercel Data</button>
-        <div id="importResult"></div>
-    </div>
+        <h1>🔄 Recover Study Data</h1>
+        
+        <div class="section">
+            <h2>🔍 Check Current Data</h2>
+            <p>Let's see what data is currently in your browser:</p>
+            <button onclick="checkCurrentData()">🔍 Check Current Data</button>
+            <div id="currentDataPreview" class="data-preview" style="display: none;"></div>
+        </div>
 
-    <div class="container">
-        <h2>Step 2: Check All Storage Data</h2>
-        <button onclick="showAllStorage()">Show All localStorage Data</button>
-        <div id="storageData"></div>
-    </div>
+        <div class="section">
+            <h2>🔍 Search for Old Data</h2>
+            <p>Let's search for any old data that might still be in localStorage:</p>
+            <button onclick="searchForOldData()">🔍 Search for Old Data</button>
+            <div id="oldDataPreview" class="data-preview" style="display: none;"></div>
+        </div>
 
-    <div class="container">
-        <h2>Step 2: Recover Old Study Data</h2>
-        <button onclick="recoverOldData()">Recover Old Study Sessions</button>
-        <div id="recoveryData"></div>
-    </div>
+        <div class="section">
+            <h2>📥 Import from Vercel</h2>
+            <p>If you have data on your Vercel deployment, paste it here:</p>
+            <textarea id="vercelData" placeholder="Paste your Vercel localStorage data here..."></textarea>
+            <div>
+                <button onclick="importVercelData()">📥 Import Vercel Data</button>
+                <button onclick="openVercelApp()">🌐 Open Vercel App</button>
+            </div>
+        </div>
 
-    <div class="container">
-        <h2>Step 3: Manual Data Entry</h2>
-        <p>If automatic recovery doesn't work, you can manually add your study sessions:</p>
-        <button onclick="window.open('http://localhost:3059', '_blank')">Open Study Tracker</button>
+        <div class="section">
+            <h2>📋 Manual Recovery Steps</h2>
+            <div class="step">
+                <h3>Step 1: Check Vercel App</h3>
+                <p>Open your Vercel deployment and check if your data is still there.</p>
+                <button onclick="openVercelApp()">🌐 Open Vercel App</button>
+            </div>
+            
+            <div class="step">
+                <h3>Step 2: Export from Vercel</h3>
+                <p>In your Vercel app, open Developer Tools (F12), go to Console, and run:</p>
+                <code>JSON.stringify(localStorage)</code>
+                <p>Copy the output and paste it in the "Import from Vercel" section above.</p>
+            </div>
+            
+            <div class="step">
+                <h3>Step 3: Import Data</h3>
+                <p>Click "Import Vercel Data" to restore your study sessions.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🛠️ Advanced Recovery</h2>
+            <p>If the above doesn't work, try these advanced recovery methods:</p>
+            <button onclick="tryDataMigration()">🔄 Try Data Migration</button>
+            <button onclick="resetBrowserId()">🆔 Reset Browser ID</button>
+            <button onclick="clearAllData()">🗑️ Clear All Data (Last Resort)</button>
+        </div>
     </div>
 
     <script>
+        function checkCurrentData() {
+            try {
+                const allData = {};
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key) {
+                        allData[key] = localStorage.getItem(key);
+                    }
+                }
+                
+                const preview = document.getElementById('currentDataPreview');
+                preview.style.display = 'block';
+                
+                if (Object.keys(allData).length === 0) {
+                    preview.innerHTML = '<div class="warning">⚠️ No data found in localStorage</div>';
+                } else {
+                    preview.innerHTML = `<strong>Found ${Object.keys(allData).length} items:</strong><br><br>${JSON.stringify(allData, null, 2)}`;
+                }
+                
+            } catch (error) {
+                showMessage('❌ Error checking data: ' + error.message, 'error');
+            }
+        }
+        
+        function searchForOldData() {
+            try {
+                const oldKeys = [
+                    'coding-storage',
+                    'goals-storage',
+                    'study-storage',
+                    'code-tracker-browser-id'
+                ];
+                
+                const foundData = {};
+                let foundAny = false;
+                
+                for (const key of oldKeys) {
+                    const value = localStorage.getItem(key);
+                    if (value) {
+                        foundData[key] = value;
+                        foundAny = true;
+                    }
+                }
+                
+                // Also search for keys that might contain old data
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.includes('storage') || key.includes('study') || key.includes('coding'))) {
+                        foundData[key] = localStorage.getItem(key);
+                        foundAny = true;
+                    }
+                }
+                
+                const preview = document.getElementById('oldDataPreview');
+                preview.style.display = 'block';
+                
+                if (!foundAny) {
+                    preview.innerHTML = '<div class="warning">⚠️ No old data found</div>';
+                } else {
+                    preview.innerHTML = `<strong>Found old data:</strong><br><br>${JSON.stringify(foundData, null, 2)}`;
+                }
+                
+            } catch (error) {
+                showMessage('❌ Error searching for old data: ' + error.message, 'error');
+            }
+        }
+        
         function importVercelData() {
-            const output = document.getElementById('importResult');
-            const vercelData = document.getElementById('vercelData').value;
+            const textarea = document.getElementById('vercelData');
+            const data = textarea.value.trim();
             
-            if (!vercelData.trim()) {
-                output.innerHTML = '<p class="error">❌ Please paste your Vercel localStorage data first!</p>';
+            if (!data) {
+                showMessage('❌ Please paste your Vercel data first', 'error');
                 return;
             }
             
             try {
-                const data = JSON.parse(vercelData);
-                let imported = 0;
+                const parsedData = JSON.parse(data);
                 
-                // Import all the data
-                for (const [key, value] of Object.entries(data)) {
+                // Import the data
+                for (const [key, value] of Object.entries(parsedData)) {
                     localStorage.setItem(key, value);
-                    imported++;
                 }
                 
-                output.innerHTML = `<p class="success">✅ Successfully imported ${imported} items from Vercel!</p>
-                                   <p class="success">🎉 <a href="http://localhost:3059" target="_blank">Click here to refresh your Study Tracker</a></p>`;
+                showMessage('✅ Data imported successfully! Refresh your Study Tracker to see the data.', 'success');
                 
-            } catch (e) {
-                output.innerHTML = `<p class="error">❌ Failed to parse data: ${e.message}</p>
-                                   <p>Make sure you copied the entire output from the Vercel console.</p>`;
+                // Clear the textarea
+                textarea.value = '';
+                
+            } catch (error) {
+                showMessage('❌ Error importing data: ' + error.message, 'error');
             }
         }
-
-        function showAllStorage() {
-            const output = document.getElementById('storageData');
-            let html = '<h3>All localStorage Keys:</h3><pre>';
-            
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                const value = localStorage.getItem(key);
-                html += `${key}: ${value}\n\n`;
-            }
-            
-            html += '</pre>';
-            output.innerHTML = html;
+        
+        function openVercelApp() {
+            const vercelUrl = 'https://study-tracker-phi.vercel.app';
+            window.open(vercelUrl, '_blank');
+            showMessage('🌐 Opening Vercel app...', 'info');
         }
-
-        function recoverOldData() {
-            const output = document.getElementById('recoveryData');
-            let html = '<h3>Data Recovery Results:</h3>';
-            
-            // Check for old coding data
-            const oldCodingKey = 'coding-storage';
-            const oldGoalsKey = 'goals-storage';
-            const oldCodingBackup = 'coding-storage-backup';
-            const oldGoalsBackup = 'goals-storage-backup';
-            
-            // Check for new study data keys
-            const newStudyKey = 'study-storage-mf95kml5-nr5ifjprdpc-TW96aWxs';
-            const newGoalsKey = 'goals-storage-mf95kml5-nr5ifjprdpc-TW96aWxs';
-            
-            let foundData = false;
-            
-            // Try to find old data
-            const oldCodingData = localStorage.getItem(oldCodingKey) || localStorage.getItem(oldCodingBackup);
-            const oldGoalsData = localStorage.getItem(oldGoalsKey) || localStorage.getItem(oldGoalsBackup);
-            
-            if (oldCodingData) {
-                html += '<p class="success">✅ Found old study data!</p>';
-                html += '<pre>' + oldCodingData + '</pre>';
+        
+        function tryDataMigration() {
+            try {
+                // Force migration
+                const oldCodingKey = 'coding-storage';
+                const oldGoalsKey = 'goals-storage';
                 
-                // Try to migrate it
+                const oldCodingData = localStorage.getItem(oldCodingKey);
+                const oldGoalsData = localStorage.getItem(oldGoalsKey);
+                
+                if (oldCodingData || oldGoalsData) {
+                    // Generate new browser ID
+                    const timestamp = Date.now().toString(36);
+                    const random = Math.random().toString(36).substring(2, 15);
+                    const userAgentHash = btoa(navigator.userAgent).substring(0, 8);
+                    const newBrowserId = `${timestamp}-${random}-${userAgentHash}`;
+                    
+                    localStorage.setItem('code-tracker-browser-id', newBrowserId);
+                    
+                    if (oldCodingData) {
+                        localStorage.setItem(`study-storage-${newBrowserId}`, oldCodingData);
+                    }
+                    
+                    if (oldGoalsData) {
+                        localStorage.setItem(`goals-storage-${newBrowserId}`, oldGoalsData);
+                    }
+                    
+                    showMessage('✅ Data migration completed! Refresh your Study Tracker.', 'success');
+                } else {
+                    showMessage('⚠️ No old data found to migrate', 'warning');
+                }
+                
+            } catch (error) {
+                showMessage('❌ Error during migration: ' + error.message, 'error');
+            }
+        }
+        
+        function resetBrowserId() {
+            try {
+                // Remove old browser ID
+                localStorage.removeItem('code-tracker-browser-id');
+                
+                // Generate new one
+                const timestamp = Date.now().toString(36);
+                const random = Math.random().toString(36).substring(2, 15);
+                const userAgentHash = btoa(navigator.userAgent).substring(0, 8);
+                const newBrowserId = `${timestamp}-${random}-${userAgentHash}`;
+                
+                localStorage.setItem('code-tracker-browser-id', newBrowserId);
+                
+                showMessage('✅ Browser ID reset! New ID: ' + newBrowserId, 'success');
+                
+            } catch (error) {
+                showMessage('❌ Error resetting browser ID: ' + error.message, 'error');
+            }
+        }
+        
+        function clearAllData() {
+            if (confirm('⚠️ This will clear ALL localStorage data. Are you sure?')) {
                 try {
-                    localStorage.setItem(newStudyKey, oldCodingData);
-                    html += '<p class="success">✅ Successfully migrated to new storage key!</p>';
-                    foundData = true;
-                } catch (e) {
-                    html += '<p class="error">❌ Failed to migrate: ' + e.message + '</p>';
+                    localStorage.clear();
+                    showMessage('✅ All data cleared. You can now start fresh.', 'success');
+                } catch (error) {
+                    showMessage('❌ Error clearing data: ' + error.message, 'error');
                 }
             }
-            
-            if (oldGoalsData) {
-                html += '<p class="success">✅ Found old goals data!</p>';
-                html += '<pre>' + oldGoalsData + '</pre>';
-                
-                try {
-                    localStorage.setItem(newGoalsKey, oldGoalsData);
-                    html += '<p class="success">✅ Successfully migrated goals data!</p>';
-                    foundData = true;
-                } catch (e) {
-                    html += '<p class="error">❌ Failed to migrate goals: ' + e.message + '</p>';
-                }
-            }
-            
-            if (!foundData) {
-                html += '<p class="warning">⚠️ No old data found. Your study sessions might be in a different browser or have been cleared.</p>';
-            }
-            
-            if (foundData) {
-                html += '<p class="success">🎉 Data recovery complete! <a href="http://localhost:3059" target="_blank">Click here to refresh your Study Tracker</a></p>';
-            }
-            
-            output.innerHTML = html;
         }
-
-        // Auto-run on page load
+        
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `data-preview ${type}`;
+            messageDiv.textContent = message;
+            messageDiv.style.marginTop = '10px';
+            
+            const container = document.querySelector('.container');
+            container.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.parentNode.removeChild(messageDiv);
+                }
+            }, 5000);
+        }
+        
+        // Auto-check on page load
         window.onload = function() {
-            showAllStorage();
+            checkCurrentData();
+            searchForOldData();
         };
     </script>
 </body>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Export Local Study Data</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #00F5FF, #FF6B6B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        button {
+            background: linear-gradient(45deg, #00F5FF, #667eea);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 245, 255, 0.4);
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            color: white;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            resize: vertical;
+            margin: 10px 0;
+        }
+        .data-preview {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+            color: #10B981;
+        }
+        .error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #EF4444;
+        }
+        .info {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            color: #3B82F6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Export Local Study Data</h1>
+        
+        <div class="section">
+            <h2>📊 Current Local Data</h2>
+            <p>Click the button below to extract all your local study data:</p>
+            <button onclick="exportLocalData()">📤 Export Local Data</button>
+            <div id="localDataPreview" class="data-preview" style="display: none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>🌐 Upload to Vercel</h2>
+            <p>Copy the exported data and paste it into your Vercel deployment:</p>
+            <textarea id="exportedData" placeholder="Exported data will appear here..."></textarea>
+            <div>
+                <button onclick="copyToClipboard()">📋 Copy to Clipboard</button>
+                <button onclick="openVercelApp()">🌐 Open Vercel App</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📋 Instructions</h2>
+            <div class="info">
+                <h3>Step 1: Export Data</h3>
+                <p>Click "Export Local Data" to extract all your study sessions and achievements.</p>
+                
+                <h3>Step 2: Copy Data</h3>
+                <p>Click "Copy to Clipboard" to copy the JSON data.</p>
+                
+                <h3>Step 3: Open Vercel App</h3>
+                <p>Click "Open Vercel App" to go to your deployed app.</p>
+                
+                <h3>Step 4: Import Data</h3>
+                <p>In your Vercel app, open Developer Tools (F12), go to Console, and run:</p>
+                <code>importVercelData()</code>
+                <p>Then paste the copied data when prompted.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function exportLocalData() {
+            try {
+                // Get all localStorage data
+                const allData = {};
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key) {
+                        allData[key] = localStorage.getItem(key);
+                    }
+                }
+                
+                const jsonData = JSON.stringify(allData, null, 2);
+                
+                // Show preview
+                const preview = document.getElementById('localDataPreview');
+                preview.style.display = 'block';
+                preview.innerHTML = `<strong>Found ${Object.keys(allData).length} localStorage items:</strong><br><br>${jsonData}`;
+                
+                // Set export data
+                document.getElementById('exportedData').value = jsonData;
+                
+                // Show success message
+                showMessage('✅ Data exported successfully!', 'success');
+                
+            } catch (error) {
+                showMessage('❌ Error exporting data: ' + error.message, 'error');
+            }
+        }
+        
+        function copyToClipboard() {
+            const textarea = document.getElementById('exportedData');
+            if (textarea.value.trim() === '') {
+                showMessage('❌ No data to copy. Please export data first.', 'error');
+                return;
+            }
+            
+            textarea.select();
+            document.execCommand('copy');
+            showMessage('📋 Data copied to clipboard!', 'success');
+        }
+        
+        function openVercelApp() {
+            // Replace with your actual Vercel URL
+            const vercelUrl = 'https://study-tracker-phi.vercel.app';
+            window.open(vercelUrl, '_blank');
+            showMessage('🌐 Opening Vercel app...', 'info');
+        }
+        
+        function showMessage(message, type) {
+            // Create message element
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `data-preview ${type}`;
+            messageDiv.textContent = message;
+            messageDiv.style.marginTop = '10px';
+            
+            // Insert after the last section
+            const container = document.querySelector('.container');
+            container.appendChild(messageDiv);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.parentNode.removeChild(messageDiv);
+                }
+            }, 3000);
+        }
+        
+        // Auto-export on page load
+        window.onload = function() {
+            exportLocalData();
+        };
+    </script>
+</body>
+</html>
