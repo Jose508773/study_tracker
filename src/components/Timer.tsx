@@ -9,68 +9,124 @@ interface TimerProps {}
 const Timer: React.FC<TimerProps> = () => {
   const [elapsed, setElapsed] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
+  const [displayTime, setDisplayTime] = useState(0);
   const { addSession } = useStudyStore();
   const startTimestampRef = useRef<number | null>(null);
-  const rafRef = useRef<number | null>(null);
+  const pauseTimestampRef = useRef<number | null>(null);
+  const totalPausedTimeRef = useRef<number>(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const getDisplayTime = () => {
-    if (isRunning && startTimestampRef.current !== null) {
-      return elapsed + Math.floor((Date.now() - startTimestampRef.current) / 1000);
-    }
-    return elapsed;
-  };
-
+  // Real-time timer update
   useEffect(() => {
-    const tick = () => {
-      if (isRunning) {
-        rafRef.current = requestAnimationFrame(tick);
+    if (isRunning && !isPaused) {
+      intervalRef.current = setInterval(() => {
+        if (startTimestampRef.current !== null) {
+          const currentTime = Date.now();
+          const sessionTime = Math.floor((currentTime - startTimestampRef.current) / 1000);
+          const totalTime = elapsed + sessionTime - totalPausedTimeRef.current;
+          setDisplayTime(Math.max(0, totalTime));
+        }
+      }, 100); // Update every 100ms for smooth display
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
-    };
-    if (isRunning) {
-      rafRef.current = requestAnimationFrame(tick);
     }
+
     return () => {
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
     };
-  }, [isRunning]);
+  }, [isRunning, isPaused, elapsed]);
+
+  // Update display time when not running
+  useEffect(() => {
+    if (!isRunning) {
+      setDisplayTime(elapsed);
+    }
+  }, [isRunning, elapsed]);
 
   const toggleTimer = () => {
     if (isRunning) {
+      // Stop the timer
       if (startTimestampRef.current !== null) {
         const now = Date.now();
         const sessionSeconds = Math.floor((now - startTimestampRef.current) / 1000);
-        const totalSeconds = elapsed + sessionSeconds;
+        const totalSeconds = elapsed + sessionSeconds - totalPausedTimeRef.current;
+        
+        // Update elapsed time
         setElapsed(totalSeconds);
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        if (hours > 0 || minutes > 0) {
+        
+        // Only save session if it's at least 1 minute
+        if (totalSeconds >= 60) {
           const nowDate = new Date();
+          const startDate = new Date(now - sessionSeconds * 1000);
+          
           addSession({
             date: nowDate.toISOString().split('T')[0],
-            startTime: new Date(now - sessionSeconds * 1000).toISOString(),
+            startTime: startDate.toISOString(),
             endTime: nowDate.toISOString(),
-            duration: hours * 60 + minutes,
+            duration: Math.round(totalSeconds / 60), // Convert seconds to minutes
             description: description || 'Study session',
+            category: category || 'General',
           });
-          setDescription('');
         }
+        
+        setDescription('');
+        setCategory('');
       }
       startTimestampRef.current = null;
+      totalPausedTimeRef.current = 0;
+      setIsPaused(false);
     } else {
+      // Start the timer
       startTimestampRef.current = Date.now();
     }
     setIsRunning(!isRunning);
   };
 
+  const togglePause = () => {
+    if (isPaused) {
+      // Resume
+      if (pauseTimestampRef.current !== null) {
+        const pauseDuration = Date.now() - pauseTimestampRef.current;
+        totalPausedTimeRef.current += Math.floor(pauseDuration / 1000);
+        pauseTimestampRef.current = null;
+      }
+      // Update start timestamp to account for pause time
+      if (startTimestampRef.current !== null) {
+        startTimestampRef.current = Date.now();
+      }
+    } else {
+      // Pause
+      pauseTimestampRef.current = Date.now();
+    }
+    setIsPaused(!isPaused);
+  };
+
   const resetTimer = () => {
     setElapsed(0);
+    setDisplayTime(0);
     setIsRunning(false);
+    setIsPaused(false);
     setDescription('');
+    setCategory('');
     startTimestampRef.current = null;
+    pauseTimestampRef.current = null;
+    totalPausedTimeRef.current = 0;
+    
+    // Clear any running intervals
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
   };
 
   const formatTime = (seconds: number) => {
@@ -110,16 +166,16 @@ const Timer: React.FC<TimerProps> = () => {
 
       {/* Timer Display */}
       <motion.div
-        className="text-4xl font-mono font-bold"
+        className="text-4xl font-mono font-bold text-white"
         animate={{ scale: isRunning ? [1, 1.05, 1] : 1 }}
         transition={{ duration: 1, repeat: Infinity }}
       >
-        {formatTime(getDisplayTime())}
+        {formatTime(displayTime)}
       </motion.div>
 
-      {/* Session Description */}
+      {/* Session Description and Category */}
       {!isRunning && (
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md space-y-3">
           <input
             type="text"
             value={description}
@@ -127,6 +183,21 @@ const Timer: React.FC<TimerProps> = () => {
             placeholder="What are you studying?"
             className="w-full px-4 py-2 rounded-lg bg-glass text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-blue outline-none"
           />
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full px-4 py-2 rounded-lg bg-glass text-white focus:ring-2 focus:ring-accent-blue outline-none"
+          >
+            <option value="">Select Category</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Science">Science</option>
+            <option value="Language">Language</option>
+            <option value="History">History</option>
+            <option value="Programming">Programming</option>
+            <option value="Art">Art</option>
+            <option value="Music">Music</option>
+            <option value="General">General</option>
+          </select>
         </div>
       )}
 
@@ -145,10 +216,25 @@ const Timer: React.FC<TimerProps> = () => {
           {isRunning ? 'Stop' : 'Start'}
         </motion.button>
         
+        {isRunning && (
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className={`px-6 py-2 rounded-full ${
+              isPaused
+                ? 'bg-accent-teal/20 text-accent-teal border border-accent-teal hover:bg-accent-teal/30'
+                : 'bg-accent-purple/20 text-accent-purple border border-accent-purple hover:bg-accent-purple/30'
+            }`}
+            onClick={togglePause}
+          >
+            {isPaused ? 'Resume' : 'Pause'}
+          </motion.button>
+        )}
+        
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className="px-6 py-2 rounded-full bg-accent-purple/20 text-accent-purple border border-accent-purple hover:bg-accent-purple/30 transition-colors"
+          className="px-6 py-2 rounded-full bg-gray-500/20 text-gray-400 border border-gray-500 hover:bg-gray-500/30 transition-colors"
           onClick={() => setShowDeleteConfirm(true)}
         >
           Reset

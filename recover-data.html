@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Tracker Data Recovery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .container {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        button {
+            background: #00F5FF;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #00D4E6;
+        }
+        pre {
+            background: #333;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Study Tracker Data Recovery</h1>
+    
+    <div class="container">
+        <h2>Step 1: Get Data from Vercel App</h2>
+        <p>1. Go to your Vercel Study Tracker app</p>
+        <p>2. Open Developer Tools (F12)</p>
+        <p>3. Go to Console tab</p>
+        <p>4. Type: <code>JSON.stringify(localStorage)</code> and press Enter</p>
+        <p>5. Copy the entire output</p>
+        <p>6. Paste it in the textarea below:</p>
+        <textarea id="vercelData" placeholder="Paste your Vercel localStorage data here..." style="width: 100%; height: 100px; background: #333; color: white; border: 1px solid #555; padding: 10px; border-radius: 5px;"></textarea>
+        <br><br>
+        <button onclick="importVercelData()">Import Vercel Data</button>
+        <div id="importResult"></div>
+    </div>
+
+    <div class="container">
+        <h2>Step 2: Check All Storage Data</h2>
+        <button onclick="showAllStorage()">Show All localStorage Data</button>
+        <div id="storageData"></div>
+    </div>
+
+    <div class="container">
+        <h2>Step 2: Recover Old Study Data</h2>
+        <button onclick="recoverOldData()">Recover Old Study Sessions</button>
+        <div id="recoveryData"></div>
+    </div>
+
+    <div class="container">
+        <h2>Step 3: Manual Data Entry</h2>
+        <p>If automatic recovery doesn't work, you can manually add your study sessions:</p>
+        <button onclick="window.open('http://localhost:3059', '_blank')">Open Study Tracker</button>
+    </div>
+
+    <script>
+        function importVercelData() {
+            const output = document.getElementById('importResult');
+            const vercelData = document.getElementById('vercelData').value;
+            
+            if (!vercelData.trim()) {
+                output.innerHTML = '<p class="error">❌ Please paste your Vercel localStorage data first!</p>';
+                return;
+            }
+            
+            try {
+                const data = JSON.parse(vercelData);
+                let imported = 0;
+                
+                // Import all the data
+                for (const [key, value] of Object.entries(data)) {
+                    localStorage.setItem(key, value);
+                    imported++;
+                }
+                
+                output.innerHTML = `<p class="success">✅ Successfully imported ${imported} items from Vercel!</p>
+                                   <p class="success">🎉 <a href="http://localhost:3059" target="_blank">Click here to refresh your Study Tracker</a></p>`;
+                
+            } catch (e) {
+                output.innerHTML = `<p class="error">❌ Failed to parse data: ${e.message}</p>
+                                   <p>Make sure you copied the entire output from the Vercel console.</p>`;
+            }
+        }
+
+        function showAllStorage() {
+            const output = document.getElementById('storageData');
+            let html = '<h3>All localStorage Keys:</h3><pre>';
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                html += `${key}: ${value}\n\n`;
+            }
+            
+            html += '</pre>';
+            output.innerHTML = html;
+        }
+
+        function recoverOldData() {
+            const output = document.getElementById('recoveryData');
+            let html = '<h3>Data Recovery Results:</h3>';
+            
+            // Check for old coding data
+            const oldCodingKey = 'coding-storage';
+            const oldGoalsKey = 'goals-storage';
+            const oldCodingBackup = 'coding-storage-backup';
+            const oldGoalsBackup = 'goals-storage-backup';
+            
+            // Check for new study data keys
+            const newStudyKey = 'study-storage-mf95kml5-nr5ifjprdpc-TW96aWxs';
+            const newGoalsKey = 'goals-storage-mf95kml5-nr5ifjprdpc-TW96aWxs';
+            
+            let foundData = false;
+            
+            // Try to find old data
+            const oldCodingData = localStorage.getItem(oldCodingKey) || localStorage.getItem(oldCodingBackup);
+            const oldGoalsData = localStorage.getItem(oldGoalsKey) || localStorage.getItem(oldGoalsBackup);
+            
+            if (oldCodingData) {
+                html += '<p class="success">✅ Found old study data!</p>';
+                html += '<pre>' + oldCodingData + '</pre>';
+                
+                // Try to migrate it
+                try {
+                    localStorage.setItem(newStudyKey, oldCodingData);
+                    html += '<p class="success">✅ Successfully migrated to new storage key!</p>';
+                    foundData = true;
+                } catch (e) {
+                    html += '<p class="error">❌ Failed to migrate: ' + e.message + '</p>';
+                }
+            }
+            
+            if (oldGoalsData) {
+                html += '<p class="success">✅ Found old goals data!</p>';
+                html += '<pre>' + oldGoalsData + '</pre>';
+                
+                try {
+                    localStorage.setItem(newGoalsKey, oldGoalsData);
+                    html += '<p class="success">✅ Successfully migrated goals data!</p>';
+                    foundData = true;
+                } catch (e) {
+                    html += '<p class="error">❌ Failed to migrate goals: ' + e.message + '</p>';
+                }
+            }
+            
+            if (!foundData) {
+                html += '<p class="warning">⚠️ No old data found. Your study sessions might be in a different browser or have been cleared.</p>';
+            }
+            
+            if (foundData) {
+                html += '<p class="success">🎉 Data recovery complete! <a href="http://localhost:3059" target="_blank">Click here to refresh your Study Tracker</a></p>';
+            }
+            
+            output.innerHTML = html;
+        }
+
+        // Auto-run on page load
+        window.onload = function() {
+            showAllStorage();
+        };
+    </script>
+</body>
+</html>

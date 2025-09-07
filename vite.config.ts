@@ -1,32 +1,14 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { fileURLToPath } from 'url';
-import { dirname, resolve } from 'path';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 5173,
-    strictPort: true,
-    open: true,
-    cors: true,
-    host: 'localhost',
+    port: 3059,
+    open: true
   },
   build: {
-    outDir: 'dist',
-    sourcemap: true,
-    assetsDir: 'assets',
-  },
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, './src'),
-      '@components': resolve(__dirname, './src/components'),
-      '@store': resolve(__dirname, './src/store'),
-      '@utils': resolve(__dirname, './src/utils'),
-    },
-  },
-  publicDir: 'public',
-}); 
+    outDir: 'dist'
+  }
+})

@@ -128,7 +128,7 @@ const Calendar: React.FC<CalendarProps> = () => {
                       {sessions.map((session, sessionIndex) => {
                         const isExpanded = expandedSessions.has(session.id);
                         const isTruncated = session.description && session.description.length > 15;
-                        const displayText = session.description || formatDuration(session.duration);
+                        const displayText = session.description || `${session.category} - ${formatDuration(session.duration)}`;
                         
                         return (
                           <div

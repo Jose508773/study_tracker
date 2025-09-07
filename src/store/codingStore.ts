@@ -10,6 +10,8 @@ export interface StudySession {
   endTime: string;
   duration: number;
   description: string;
+  category: string;
+  studyReason?: string;
 }
 
 interface StudyState {
@@ -54,6 +56,16 @@ const validateSession = (session: Partial<StudySession>): boolean => {
     return false;
   }
 
+  if (!session.description || session.description.trim() === '') {
+    console.error('Missing description:', session);
+    return false;
+  }
+
+  if (!session.category || session.category.trim() === '') {
+    console.error('Missing category:', session);
+    return false;
+  }
+
   return true;
 };
 
@@ -91,7 +103,9 @@ export const useStudyStore = create<StudyState>()(
         const newSession = { 
           ...session, 
           id: uuidv4(),
-          duration: session.duration || 0
+          duration: session.duration || 0,
+          category: session.category || 'General',
+          studyReason: session.studyReason || ''
         };
         
         console.log('New session with ID:', newSession);
@@ -183,7 +197,7 @@ export const useStudyStore = create<StudyState>()(
     {
       name: getStorageKey('study-storage'),
       storage: createJSONStorage(() => localStorage),
-      version: 2,
+      version: 3,
       partialize: (state) => state,
       onRehydrateStorage: () => (state) => {
         console.log('Hydrated coding state:', state);
