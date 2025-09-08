@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Canvas } from '@react-three/fiber';
-import { Ring } from '@react-three/drei';
 import { useStudyStore } from '../store/codingStore';
 
 interface TimerProps {}
@@ -143,25 +141,31 @@ const Timer: React.FC<TimerProps> = () => {
     <div className="flex flex-col items-center space-y-6">
       <h2 className="text-2xl font-bold text-accent-blue">Study Timer</h2>
       
-      {/* 3D Timer Ring */}
-      <div className="w-48 h-48">
-        <Canvas>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} />
-          <Ring
-            args={[1, 1.2, 64]}
-            rotation={[-Math.PI / 2, 0, 0]}
-            position={[0, 0, 0]}
-          >
-            <meshStandardMaterial
-              color="#00F5FF"
-              emissive="#00F5FF"
-              emissiveIntensity={0.5}
-              transparent
-              opacity={0.8}
-            />
-          </Ring>
-        </Canvas>
+      {/* Timer Icon */}
+      <div className="w-48 h-48 flex items-center justify-center">
+        <div className="relative">
+          {/* Timer Circle */}
+          <div className="w-32 h-32 rounded-full border-4 border-accent-blue/30 bg-gradient-to-br from-accent-blue/10 to-accent-purple/10 flex items-center justify-center shadow-lg">
+            {/* Timer Face */}
+            <div className="w-24 h-24 rounded-full border-2 border-accent-blue/50 bg-white/5 flex items-center justify-center relative">
+              {/* Timer Hand */}
+              <div 
+                className="absolute w-1 h-8 bg-accent-blue rounded-full origin-bottom transition-transform duration-1000"
+                style={{
+                  transform: isRunning ? `rotate(${(displayTime % 60) * 6}deg)` : 'rotate(0deg)'
+                }}
+              ></div>
+              {/* Center Dot */}
+              <div className="w-2 h-2 bg-accent-blue rounded-full"></div>
+            </div>
+          </div>
+          {/* Timer Icon */}
+          <div className="absolute -top-2 -right-2 w-8 h-8 bg-accent-blue rounded-full flex items-center justify-center">
+            <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+            </svg>
+          </div>
+        </div>
       </div>
 
       {/* Timer Display */}
