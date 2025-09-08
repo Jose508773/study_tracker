@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useStudyStore } from '../store/codingStore';
-import { format, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay } from 'date-fns';
+import { format, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
 
 const Analytics: React.FC = () => {
   const { sessions, getTotalTime, getStreak } = useStudyStore();
