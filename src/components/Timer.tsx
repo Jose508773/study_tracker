@@ -205,15 +205,15 @@ const Timer: React.FC<TimerProps> = () => {
         </div>
       )}
 
-      {/* Controls - Mobile Optimized */}
-      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+      {/* Controls - Compact Design */}
+      <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className={`flex-1 px-8 py-4 rounded-xl text-lg font-semibold min-h-[60px] touch-manipulation ${
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium touch-manipulation transition-all duration-200 ${
             isRunning
-              ? 'bg-red-500/20 text-red-400 border-2 border-red-500/50 hover:bg-red-500/30 active:bg-red-500/40'
-              : 'bg-white/20 text-white border-2 border-white/50 hover:bg-white/30 active:bg-white/40'
+              ? 'bg-red-500/15 text-red-300 border border-red-500/30 hover:bg-red-500/25'
+              : 'bg-white/10 text-white border border-white/20 hover:bg-white/15'
           }`}
           onClick={toggleTimer}
         >
@@ -222,12 +222,12 @@ const Timer: React.FC<TimerProps> = () => {
         
         {isRunning && (
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={`flex-1 px-8 py-4 rounded-xl text-lg font-semibold min-h-[60px] touch-manipulation ${
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium touch-manipulation transition-all duration-200 ${
               isPaused
-                ? 'bg-green-500/20 text-green-400 border-2 border-green-500/50 hover:bg-green-500/30 active:bg-green-500/40'
-                : 'bg-yellow-500/20 text-yellow-400 border-2 border-yellow-500/50 hover:bg-yellow-500/30 active:bg-yellow-500/40'
+                ? 'bg-green-500/15 text-green-300 border border-green-500/30 hover:bg-green-500/25'
+                : 'bg-yellow-500/15 text-yellow-300 border border-yellow-500/30 hover:bg-yellow-500/25'
             }`}
             onClick={togglePause}
           >
@@ -236,9 +236,9 @@ const Timer: React.FC<TimerProps> = () => {
         )}
         
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="flex-1 px-8 py-4 rounded-xl text-lg font-semibold min-h-[60px] touch-manipulation bg-gray-500/20 text-gray-300 border-2 border-gray-500/50 hover:bg-gray-500/30 active:bg-gray-500/40"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex-1 px-4 py-2 rounded-lg text-sm font-medium touch-manipulation bg-gray-500/10 text-gray-300 border border-gray-500/20 hover:bg-gray-500/15 transition-all duration-200"
           onClick={() => setShowDeleteConfirm(true)}
         >
           🔄 Reset
@@ -265,23 +265,23 @@ const Timer: React.FC<TimerProps> = () => {
             <p className="text-gray-400 mb-6">
               Are you sure you want to reset the timer? This will clear the current session time.
             </p>
-            <div className="flex justify-end space-x-4">
+            <div className="flex justify-end space-x-3">
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20"
+                className="px-3 py-1.5 rounded-md bg-white/10 text-white text-sm hover:bg-white/15 transition-all duration-200"
               >
                 Cancel
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => {
                   resetTimer();
                   setShowDeleteConfirm(false);
                 }}
-                className="px-4 py-2 rounded-lg bg-red-500/20 text-red-500 border border-red-500 hover:bg-red-500/30"
+                className="px-3 py-1.5 rounded-md bg-red-500/15 text-red-300 text-sm border border-red-500/30 hover:bg-red-500/25 transition-all duration-200"
               >
                 Reset
               </motion.button>

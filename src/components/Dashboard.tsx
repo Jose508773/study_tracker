@@ -84,14 +84,14 @@ const Dashboard: React.FC = () => {
           </h1>
           <p className="text-gray-400 mt-2">Track your learning progress and achievements</p>
         </div>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setShowCustomize(true)}
-          className="px-6 py-3 rounded-xl bg-gradient-to-r from-white/20 to-white/10 text-white border border-white/30 hover:border-white/50 transition-all duration-300 backdrop-blur-sm"
-        >
-          🎨 Customize
-        </motion.button>
+               <motion.button
+                 whileHover={{ scale: 1.02 }}
+                 whileTap={{ scale: 0.98 }}
+                 onClick={() => setShowCustomize(true)}
+                 className="px-4 py-2 rounded-lg bg-white/10 text-white text-sm border border-white/20 hover:bg-white/15 hover:border-white/30 transition-all duration-200 backdrop-blur-sm"
+               >
+                 🎨 Customize
+               </motion.button>
       </motion.div>
 
       {/* Stats Grid */}
