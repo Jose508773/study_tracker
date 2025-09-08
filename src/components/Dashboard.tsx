@@ -5,6 +5,8 @@ import { useStudyStore } from '../store/codingStore';
 import GoalsAndAchievements from './GoalsAndAchievements';
 import DataVisualization from './DataVisualization';
 import CustomizableDashboard from './CustomizableDashboard';
+import Analytics from './Analytics';
+import StudySessionCards from './StudySessionCards';
 
 interface StatCardProps {
   title: string;
@@ -18,7 +20,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color }) => (
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     whileHover={{ scale: 1.02, y: -2 }}
-    className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 shadow-lg"
+    className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 shadow-lg animate-fade-in-scale"
   >
     <div className="flex items-center justify-between">
       <div>
@@ -49,19 +51,19 @@ const Dashboard: React.FC = () => {
       title: 'Today\'s Study Time',
       value: formatDuration(todayTotal),
       icon: '⏱️',
-      color: 'text-accent-blue',
+      color: 'text-white',
     },
     {
       title: 'Weekly Streak',
       value: `${getStreak()} days`,
       icon: '🔥',
-      color: 'text-accent-purple',
+      color: 'text-white',
     },
     {
       title: 'Total Hours',
       value: formatDuration(getTotalTime()),
       icon: '📊',
-      color: 'text-accent-teal',
+      color: 'text-white',
     },
   ];
 
@@ -77,7 +79,7 @@ const Dashboard: React.FC = () => {
         className="flex justify-between items-center"
       >
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
             Study Dashboard
           </h1>
           <p className="text-gray-400 mt-2">Track your learning progress and achievements</p>
@@ -86,7 +88,7 @@ const Dashboard: React.FC = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowCustomize(true)}
-          className="px-6 py-3 rounded-xl bg-gradient-to-r from-accent-blue/20 to-accent-purple/20 text-white border border-accent-blue/30 hover:border-accent-blue/50 transition-all duration-300 backdrop-blur-sm"
+          className="px-6 py-3 rounded-xl bg-gradient-to-r from-white/20 to-white/10 text-white border border-white/30 hover:border-white/50 transition-all duration-300 backdrop-blur-sm"
         >
           🎨 Customize
         </motion.button>
@@ -105,6 +107,12 @@ const Dashboard: React.FC = () => {
           </motion.div>
         ))}
       </div>
+
+      {/* Analytics & Insights */}
+      <Analytics />
+
+      {/* Study Session Cards */}
+      <StudySessionCards />
 
       {/* Data Visualization */}
       <DataVisualization />

@@ -138,30 +138,30 @@ const Timer: React.FC<TimerProps> = () => {
   };
 
   return (
-    <div className="flex flex-col items-center space-y-6">
-      <h2 className="text-2xl font-bold text-accent-blue">Study Timer</h2>
+    <div className="flex flex-col items-center space-y-6 animate-fade-in-scale">
+      <h2 className="text-2xl font-bold text-white">Study Timer</h2>
       
       {/* Timer Icon */}
       <div className="w-48 h-48 flex items-center justify-center">
         <div className="relative">
           {/* Timer Circle */}
-          <div className="w-32 h-32 rounded-full border-4 border-accent-blue/30 bg-gradient-to-br from-accent-blue/10 to-accent-purple/10 flex items-center justify-center shadow-lg">
+          <div className="w-32 h-32 rounded-full border-4 border-white/30 bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center shadow-lg">
             {/* Timer Face */}
-            <div className="w-24 h-24 rounded-full border-2 border-accent-blue/50 bg-white/5 flex items-center justify-center relative">
+            <div className="w-24 h-24 rounded-full border-2 border-white/50 bg-white/5 flex items-center justify-center relative">
               {/* Timer Hand */}
               <div 
-                className="absolute w-1 h-8 bg-accent-blue rounded-full origin-bottom transition-transform duration-1000"
+                className="absolute w-1 h-8 bg-white rounded-full origin-bottom transition-transform duration-1000"
                 style={{
                   transform: isRunning ? `rotate(${(displayTime % 60) * 6}deg)` : 'rotate(0deg)'
                 }}
               ></div>
               {/* Center Dot */}
-              <div className="w-2 h-2 bg-accent-blue rounded-full"></div>
+              <div className="w-2 h-2 bg-white rounded-full"></div>
             </div>
           </div>
           {/* Timer Icon */}
-          <div className="absolute -top-2 -right-2 w-8 h-8 bg-accent-blue rounded-full flex items-center justify-center">
-            <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+          <div className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center">
+            <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
             </svg>
           </div>
@@ -205,43 +205,43 @@ const Timer: React.FC<TimerProps> = () => {
         </div>
       )}
 
-      {/* Controls */}
-      <div className="flex space-x-4">
+      {/* Controls - Mobile Optimized */}
+      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
         <motion.button
-          whileHover={{ scale: 1.1 }}
+          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className={`px-6 py-2 rounded-full ${
+          className={`flex-1 px-8 py-4 rounded-xl text-lg font-semibold min-h-[60px] touch-manipulation ${
             isRunning
-              ? 'bg-red-500/20 text-red-500 border border-red-500 hover:bg-red-500/30'
-              : 'bg-accent-blue/20 text-accent-blue border border-accent-blue hover:bg-accent-blue/30'
+              ? 'bg-red-500/20 text-red-400 border-2 border-red-500/50 hover:bg-red-500/30 active:bg-red-500/40'
+              : 'bg-white/20 text-white border-2 border-white/50 hover:bg-white/30 active:bg-white/40'
           }`}
           onClick={toggleTimer}
         >
-          {isRunning ? 'Stop' : 'Start'}
+          {isRunning ? '⏹️ Stop' : '▶️ Start'}
         </motion.button>
         
         {isRunning && (
           <motion.button
-            whileHover={{ scale: 1.1 }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className={`px-6 py-2 rounded-full ${
+            className={`flex-1 px-8 py-4 rounded-xl text-lg font-semibold min-h-[60px] touch-manipulation ${
               isPaused
-                ? 'bg-accent-teal/20 text-accent-teal border border-accent-teal hover:bg-accent-teal/30'
-                : 'bg-accent-purple/20 text-accent-purple border border-accent-purple hover:bg-accent-purple/30'
+                ? 'bg-green-500/20 text-green-400 border-2 border-green-500/50 hover:bg-green-500/30 active:bg-green-500/40'
+                : 'bg-yellow-500/20 text-yellow-400 border-2 border-yellow-500/50 hover:bg-yellow-500/30 active:bg-yellow-500/40'
             }`}
             onClick={togglePause}
           >
-            {isPaused ? 'Resume' : 'Pause'}
+            {isPaused ? '▶️ Resume' : '⏸️ Pause'}
           </motion.button>
         )}
         
         <motion.button
-          whileHover={{ scale: 1.1 }}
+          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="px-6 py-2 rounded-full bg-gray-500/20 text-gray-400 border border-gray-500 hover:bg-gray-500/30 transition-colors"
+          className="flex-1 px-8 py-4 rounded-xl text-lg font-semibold min-h-[60px] touch-manipulation bg-gray-500/20 text-gray-300 border-2 border-gray-500/50 hover:bg-gray-500/30 active:bg-gray-500/40"
           onClick={() => setShowDeleteConfirm(true)}
         >
-          Reset
+          🔄 Reset
         </motion.button>
       </div>
 
